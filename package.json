@@ -1,0 +1,39 @@
+{
+  "name": "englishexercices",
+  "version": "1.0.0",
+  "description": "Online English Exercices",
+  "main": "WEBserver.js",
+  "scripts": {
+    "nodemon": "nodemon WEBserver.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://lluisg@github.com/lluisg/EnglishExercices.git"
+  },
+  "keywords": [
+    "english",
+    "online",
+    "classes",
+    "exercices",
+    "nodejs",
+    "p5js",
+    "mongodb"
+  ],
+  "author": "Lluis Guardia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lluisg/EnglishExercices/issues"
+  },
+  "homepage": "https://github.com/lluisg/EnglishExercices#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "mongodb": "^3.5.6",
+    "nodemon": "^2.0.3",
+    "path": "^0.12.7",
+    "serve-favicon": "^2.5.0",
+    "socket.io": "^2.3.0",
+    "underscore": "^1.10.2"
+  }
+}
