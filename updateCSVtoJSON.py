@@ -23,7 +23,7 @@ with open('jsons_DB/usernamesDB.json', 'w') as f:
     f.write(j)
 
 # CROSSWORD TABLE --------------------------------------------------------------
-sh = wb.sheet_by_index(1)
+sh = wb.sheet_by_index(2)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -44,7 +44,7 @@ with open('jsons_DB/crosswordDB.json', 'w') as f:
     f.write(j)
 
 # SEARCH PUZZLE TABLE ----------------------------------------------------------
-sh = wb.sheet_by_index(2)
+sh = wb.sheet_by_index(1)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -64,7 +64,7 @@ with open('jsons_DB/searchpuzzleDB.json', 'w') as f:
 
 
 # IMAGES TABLE -----------------------------------------------------------------
-sh = wb.sheet_by_index(3)
+sh = wb.sheet_by_index(4)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -85,7 +85,7 @@ with open('jsons_DB/imagesDB.json', 'w') as f:
 
 
 # TEXT LINE TABLE --------------------------------------------------------------
-sh = wb.sheet_by_index(4)
+sh = wb.sheet_by_index(8)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -105,7 +105,7 @@ with open('jsons_DB/textlineDB.json', 'w') as f:
     f.write(j)
 
 # HANGMAN TABLE -----------------------------------------------------------------
-sh = wb.sheet_by_index(5)
+sh = wb.sheet_by_index(9)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -125,7 +125,7 @@ with open('jsons_DB/hangmanDB.json', 'w') as f:
 
 
 # MULTIPLE CHOICE TABLE --------------------------------------------------------
-sh = wb.sheet_by_index(6)
+sh = wb.sheet_by_index(5)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -150,7 +150,7 @@ with open('jsons_DB/multiplechoiceDB.json', 'w') as f:
 
 
 # MULTIPLE CHOICE TEXT TABLE ---------------------------------------------------
-sh = wb.sheet_by_index(7)
+sh = wb.sheet_by_index(6)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -170,7 +170,7 @@ with open('jsons_DB/multiplechoicetextDB.json', 'w') as f:
 
 
 # GROUPING TABLE ---------------------------------------------------------------
-sh = wb.sheet_by_index(8)
+sh = wb.sheet_by_index(7)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -191,7 +191,7 @@ with open('jsons_DB/groupingDB.json', 'w') as f:
 
 
 # SOUNDS TABLE -----------------------------------------------------------------
-sh = wb.sheet_by_index(9)
+sh = wb.sheet_by_index(3)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict

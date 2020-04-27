@@ -1,59 +1,70 @@
-const express = require('express');
-const app = express();
-var socket = require('socket.io');
-var _ = require('underscore');
-const { MongoClient } = require("mongodb");
+const Express = require("express");
+const MongoClient = require("mongodb").MongoClient;
+const ObjectId = require("mongodb").ObjectID;
+
+var app = Express();
+
+app.use(Express.static(__dirname + '/public'));
+app.use(Express.json());
 
 var favicon = require('serve-favicon');
 var path = require('path');
 app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
 
-// Connect Database from MongoDB
-const url = "mongodb+srv://englishDB:englishpassword@cluster0-5liml.mongodb.net/test?retryWrites=true&w=majority";
-const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true } );
 
-var server = app.listen(3000,() => console.log('listening at 3000'));
-app.use(express.static(__dirname + '/public'));
-app.use(express.json());
+const CONNECTION_URL = "mongodb+srv://englishDB:englishpassword@cluster0-5liml.mongodb.net/test?retryWrites=true&w=majority";
+const DATABASE_NAME = "englishDB";
+
+// CONNECT MONGODB DATABASE
+var server = app.listen(3000, () => {
+    console.log('listening at 3000')
+    MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
+        if(error) {
+            throw error;
+        }
+        db = client.db(DATABASE_NAME);
+        console.log("Connected to `" + DATABASE_NAME + "`!");
+    });
+});
+
+var socket = require('socket.io');
+var _ = require('underscore');
 var io = socket(server)
 
-app.get('/getDB', async (request, response) => {
 
-  // with firebase
-  usersdb.once("value", function(data, error){
-    if (error){
-      response.end();
-      console.log('Error while performing Query.', err);
-      return;
-    }
-    // var users = data.val();
-    // // Grab the keys to iterate over the object
-    // var keys = Object.keys(users);
-    //
-    // for (var i = 0; i < keys.length; i++) {
-    //   var key = keys[i];
-    //   // Look at each fruit object!
-    //   var user = users[key];
-    //   print('name '+user.name)
-    //   print('pass '+user.password)
-    // }
-    response.json({data});
-    console.log('The query result is: ', data);
-  });
 
-  // // with mysql
-  // console.log('request parameters',request.params);
-  // const sqlquery = request.params.sql;
-  // db.query(sqlquery, function(err, rows) { //MAKE A QUERY
-  //     if (err){
-  //       response.end();
-  //       console.log('Error while performing Query.', err);
-  //       return;
-  //     }
-  //     response.json({rows});
-  //     console.log('The query result is: ', rows);
-  //
-  // });
+
+
+app.get("/getDB/:unit", (request, response) => {
+  /*
+  pass the unit and exercice
+  returns the complete database (if necessary sorted or others)
+  */
+  console.log('request parameters',request.params);
+  const ex = request.params.unit.split('&')[0];
+  const unit = parseInt(request.params.unit.split('&')[1]);
+
+  if(ex=='crossword'){
+      db.collection(ex).find({ unit:unit }).project({ unit:0, _id:0})
+                                .sort({ crossword_position:1 }).toArray((error, result) => {
+        if(error) {
+          console.log('errroooooorr croswword DBBB')
+          return response.status(500).send(error);
+        }
+        console.log('The query result is: ', result);
+        response.json({result});
+      });
+  }else{
+      db.collection(ex).find({ unit:unit }).project({ unit:0, _id:0})
+                                .toArray((error, result) => {
+        if(error) {
+          console.log('errroooooorr DBBB')
+          return response.status(500).send(error);
+        }
+        console.log('The query result is: ', result);
+        response.json({result});
+      });
+  }
 });
 
 app.post('/checkUsr', async (request, response) => {
@@ -66,28 +77,23 @@ app.post('/checkUsr', async (request, response) => {
   user = request.body.user.username
   pass = request.body.user.password
 
-  try {
-      await client.connect();
-      console.log("Connected correctly to server");
-      result = await client.db("englishDB").collection("users")
-                          .findOne({ name:user, password:pass });
+  db.collection("users").findOne({ name:user, password:pass }, (error, result) => {
+          if(error) {
+              console.log('errooooooor users')
+              return response.status(500).send(error);
+          }
 
-      if (result) {
-          console.log('Found a username '+result);
-          response.json({
-            status:'succes'
-          });
-      } else {
-          console.log('No usernames found');
-          response.json({
-            status:'wrong'
-          });
-      }
-
-  } catch (err) {
-      console.log(err.stack);
-  }
-  finally {
-      await client.close();
-  }
+          if (result) {
+            console.log('Found a username');
+            console.log(result)
+            response.json({
+              status:'succes'
+            });
+          } else {
+            console.log('No usernames found');
+            response.json({
+              status:'wrong'
+            });
+          }
+      });
 });
