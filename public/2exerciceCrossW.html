@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CrossWords</title>
+    <link rel="stylesheet" type="text/css" href="styleCross.css">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+  </head>
+  <body style="background-color:#dcdcdc;">
+    <div id="puzzle_container">
+      <table id="puzzle"></table>
+    </div>
+
+    <div id="hints_container">
+      <h3>Vertical</h3>
+        <div id="vertical_hints_container"></div>
+      <h3>Horizontal</h3>
+        <div id="horizontal_hints_container"></div>
+    </div>
+
+    <div id="buttons_container">
+      <button id="clear_all">Clear</button>
+      <button id="check">Check</button>
+      <button id="solve">Solve</button>
+      <button id="clue">Clue</button>
+      <button id="return">Return</button>
+    </div>
+
+    <script src="2exerciceCrossW.js"></script>
+  </body>
+</html>

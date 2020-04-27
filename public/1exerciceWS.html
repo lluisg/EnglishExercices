@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Word Find</title>
+      <link rel="stylesheet" type="text/css" href="wordfind/wordfind.css">
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+    </head>
+    <body style="background-color:#dcdcdc;">
+        <!-- init puzzle value -->
+        <div id="main" role="main">
+            <div id="puzzle"></div>
+            <ul id="words">
+                <li id="add-word">List of Words</li>
+                <!-- <button id="add-word">Add word</button></li> -->
+            </ul>
+            <fieldset id="controls">
+                <!-- <label for="allowed-missing-words">Allowed missing words :
+                    <input id="allowed-missing-words" type="number" min="0" max="5" step="1" value="2">
+                </label>
+                <label for="max-grid-growth">Max grid growth :
+                    <input id="max-grid-growth" type="number" min="0" max="5" step="1" value="0">
+                </label>
+                <label for="extra-letters">Extra letters :
+                    <select id="extra-letters">
+                        <option value="secret-word" selected>form a secret word</option>
+                        <option value="none">none, allow blanks</option>
+                        <option value="secret-word-plus-blanks">form a secret word but allow for extra blanks</option>
+                        <option value="random">random</option>
+                    </select>
+                </label>
+                <label for="secret-word">Secret word :
+                    <input id="secret-word">
+                </label> -->
+                <button id="solve">Solve Puzzle</button>
+                <button id="create-grid">Create grid</button>
+                <p id="result-message"></p>
+                <button id="get-back">Return</button>
+            </fieldset>
+        </div>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript" src="wordfind/wordfind.js"></script>
+        <script type="text/javascript" src="wordfind/wordfindgame.js"></script>
+
+        <script src="1exerciceWS.js"></script>
+      </body>
+</html>
