@@ -7,12 +7,12 @@ var app = Express();
 app.use(Express.static(__dirname + '/public'));
 app.use(Express.json());
 
+require('dotenv').config()
 var favicon = require('serve-favicon');
 var path = require('path');
 app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
 
-
-const CONNECTION_URL = "mongodb+srv://englishDB:englishpassword@cluster0-5liml.mongodb.net/test?retryWrites=true&w=majority";
+const CONNECTION_URL = process.env.CONNECTION_URL;
 const DATABASE_NAME = "englishDB";
 
 // CONNECT MONGODB DATABASE
