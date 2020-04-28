@@ -4,15 +4,14 @@ queryString = queryString.substring(1);
 var unitEx = queryString.split("=")[1];
 console.log('Unit: '+unitEx);
 
-var numberwords, numberoptions; //number of blankwords in the text and its options
 var parragraf, text2complete; //paragraf parametre and base text
-// var parragraf='I\'m a '+word[0]+' studing blablabla, I like to '+word[1]+' too, so... Who are '+word[2]+' ?';
 
 //initialize buttons, options, word and solutions
 var buttons = new Array();
 // buttons[0] = new Array();
 // buttons[1] = new Array();
 // buttons[2] = new Array();
+var shuffled_options = new Array(); //same as options, but they have randomized positions
 var options = new Array();
 // var options = [['girl', 'boy', 'racoon', 'apache helicopte'],
 //           ['play football', 'do nothing', 'sing', 'fuck'],
@@ -25,58 +24,34 @@ var solutions = new Array();
 var correct=false; //if the checking is good or not
 
 async function setup(){
-  // var lengthOptions=Array.from(flatten(options)).length;
-  // console.log(JSON.parse(JSON.stringify(buttons)));
 
-  //it will be scalated in order to mantain order
-  //select number of words
-  var sql='SELECT word FROM multiplechoice WHERE unit= '+unitEx;
-  ///////// GETS THE WORDS NUMBER TO SUBSTITUTE
   var auxDB = getData().then(response =>{
-    numberwords=response.rows[response.rows.length-1].word+1; //index start 0
-    console.log('# words: '+numberwords);
 
-    for(let i=0; i<numberwords; i++){
-      buttons[i] = new Array();
+    for(let i=0; i<response.result.length;i++){
+      solutions[i] = response.result[i].correct_answer;
+
       options[i] = new Array();
-      words[i]=i+1;
+      options[i][0] = response.result[i].option1;
+      options[i][1] = response.result[i].option2;
+      options[i][2] = response.result[i].option3;
+      options[i][3] = response.result[i].option4;
+      shuffled_options[i] = shuffleArray(options[i])
+
+      buttons[i] = new Array();
+
+      words[i] = i+1;
     }
 
-    //select the options
-    for(let i=0; i<numberwords; i++){
-      var sql='SELECT options FROM multiplechoice WHERE unit= '+unitEx+' AND word= '+i+' ORDER BY RAND()';
-      //////////// GETS ALL THE POSSIBLE WORDS THAT HAVE THAT NUMBER WORD SUBSTITUTE
-      var optionsDB = getData(sql).then(response =>{
-        for(let j =0; j<response.rows.length; j++){
-          options[i][j] = response.rows[j].options;
-        }
-        // console.log('options');
-        // console.log(options);
+    var textDB = getText().then(response2 =>{
 
-        //select the solutions
-        // for(let i=0; i<numberwords; i++){
-          var sql='SELECT options FROM multiplechoice WHERE unit= '+unitEx+' AND word= '+i+' AND correct = "true"';
-          ////////////// GETS THE CORRECT OPTION AMONG THEM
-          var solutionsDB = getData(sql).then(response =>{
-            solutions[i] = response.rows[0].options;
-            // console.log('solutions');
-            // console.log(solutions);
+      text2complete=response2.result[0].text.split('@');
 
-            //select the text
-            var sql='SELECT text FROM multiplechoice WHERE unit= '+unitEx+' AND text IS NOT NULL';
-            ////////////// GETS THE DIFFERENTS PARTS OF THE TEXT
-            var textDB = getData(sql).then( async(response) =>{
-              text2complete=response.rows;
+      createButtonsOptions(windowWidth/2, windowHeight/2, 4, words.length, buttons, windowWidth/4, windowHeight/2 );
+      resetParragraf();
+      resetCanvas();
 
-              await createButtonsOptions(windowWidth/2, windowHeight/2,4,3,buttons, windowWidth/4, windowHeight/2 );
-              resetParragraf();
-              resetCanvas();
-            });
-          });
-      });
-    }
+    });
   });
-
 
   loginOut();
 
@@ -122,7 +97,7 @@ function checking(){
       }
     });
   }
-  if(numbercorrect==numberwords){
+  if(numbercorrect==words.length){
     correct=true;
     resetCanvas();
   }
@@ -131,7 +106,7 @@ function checking(){
 function selectButton(){
   console.log('button selected');
   [indx, indy] = getIndexOfK(buttons, this);
-  words[indx]=options[indx][indy];
+  words[indx]=shuffled_options[indx][indy];
 
   var posy=this.y
   // resetCanvas();
@@ -159,30 +134,35 @@ function createButtonsOptions(x,y,n,g,buttons, startingPointX,startingPointY, wr
   //this x and y will be distw and disth
   distw=x/((3*n)+1);
   disth=y/((2*g)+1);
+  console.log('111', n, g, distw, disth)
 
   for(let i=1; i <= g; i++){
     for(let j=1;j <= n; j++){
-      buttons[i-1][j-1] = createButton(options[i-1][j-1]);
+      buttons[i-1][j-1] = createButton(shuffled_options[i-1][j-1]);
       buttons[i-1][j-1].position((((j-1)*3)+1)*distw+startingPointX, ((2*i)-1)*disth+startingPointY);
       buttons[i-1][j-1].size(2*distw+5,disth);
       buttons[i-1][j-1].value(0);
     }
   }
+  console.log('222')
 }
 
 function resetParragraf(){
   var parr='', w=0;
+  console.log('res par')
+  console.log(text2complete)
 
   text2complete.forEach(function(textParts){
-    parr=parr+textParts.text;
+    console.log(textParts)
+    parr=parr+textParts;
     if(words[w]!=undefined){
       parr=parr+words[w];
     }
     w++;
   });
 
-  parragraf=parr;
   // 'I\'m a ('+word[0]+') studing blablabla, I like to ('+word[1]+') too, so... Who are ('+word[2]+') ?';
+  parragraf=parr;
 }
 
 function resetCanvas(){
@@ -210,13 +190,6 @@ function resetCanvas(){
 }
 
 
-
-function *flatten(array) {
-  for (elt of array)
-    if (Array.isArray(elt)) yield *flatten(elt);
-    else yield elt;
-}
-
 function getIndexOfK(arr, k) { //finder multidimensional array
   for (var i = 0; i < arr.length; i++) {
     var index = arr[i].indexOf(k);
@@ -224,6 +197,17 @@ function getIndexOfK(arr, k) { //finder multidimensional array
       return [i, index];
     }
   }
+}
+
+function shuffleArray(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
 }
 
 function loginOut(){

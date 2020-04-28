@@ -136,7 +136,7 @@ for rownum in range(1, sh.nrows):
 
     data['unit'] = int(row_values[0])
     data['number_word'] = int(row_values[1])
-    data['number_correct'] = int(row_values[2])
+    data['correct_answer'] = str(row_values[2])
     data['option1'] = str(row_values[3])
     data['option2'] = str(row_values[4])
     data['option3'] = str(row_values[5])
