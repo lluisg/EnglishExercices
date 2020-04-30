@@ -212,6 +212,26 @@ j = json.dumps(data_list)
 with open('jsons_DB/soundsDB.json', 'w') as f:
     f.write(j)
 
+# PINTURILLO TABLE -------------------------------------------------------------
+sh = wb.sheet_by_index(10)
+# List to hold dictionaries
+data_list = []
+# Iterate through each row in worksheet and fetch values into dict
+
+for rownum in range(1, sh.nrows):
+    data = OrderedDict()
+    row_values = sh.row_values(rownum)
+
+    data['unit'] = int(row_values[0])
+    data['word'] = str(row_values[1])
+    data_list.append(data)
+
+# Serialize the list of dicts to JSON
+j = json.dumps(data_list)
+# Write to file
+with open('jsons_DB/pinturilloDB.json', 'w') as f:
+    f.write(j)
+
 
 
 

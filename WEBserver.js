@@ -11,6 +11,7 @@ require('dotenv').config()
 var favicon = require('serve-favicon');
 var path = require('path');
 app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
+var _ = require('underscore');
 
 const CONNECTION_URL = process.env.CONNECTION_URL;
 const DATABASE_NAME = "englishDB";
@@ -28,11 +29,70 @@ var server = app.listen(3000, () => {
 });
 
 var socket = require('socket.io');
-var _ = require('underscore');
 var io = socket(server)
 
+var users_connected = {};
+var pair_users = {};
+io.sockets.on('connect', function(socket) {
+    users_connected[socket.id] = 0;
+    console.log('new socket')
+    console.log(users_connected)
 
 
+    for(var key in users_connected){
+      // if I find someone who is not connected already, I put both values as connected
+      // and warn both of us that we have been connected
+      if(users_connected[key] == 0 && key!=socket.id){
+        users_connected[socket.id] = 1;
+        users_connected[key] = 1;
+        // pair_users[socket.id] = key;
+        console.log('user '+socket.id+' paired with '+key);
+        console.log(users_connected);
+        io.to(socket.id).emit('paired', key, 1);
+        socket.broadcast.to(key).emit('paired', socket.id, 2);
+        // socket.broadcast.to(key).emit('paired', socket.id);
+        break;
+      }
+      console.log('NO CONNECTION FOUND');
+    }
+
+    socket.on('conn_partner', function(partner_id){
+      pair_users[socket.id] = partner_id;
+      console.log('pairing done for ', socket.id)
+      console.log(pair_users)
+    });
+
+    socket.on('paint', function(data){
+      socket.broadcast.to(pair_users[socket.id]).emit('painted', data);
+    });
+
+    socket.on('write', function(data){
+      socket.broadcast.to(pair_users[socket.id]).emit('written', data);
+    });
+
+    socket.on('set_actual_guess', function(data){
+      socket.broadcast.to(pair_users[socket.id]).emit('get_actual_guess', data);
+    });
+
+    socket.on('disconnect', function() {
+      // delete the connections saved
+      users_connected = _.omit(users_connected,socket.id);
+
+      socket.broadcast.to(pair_users[socket.id]).emit('pair_disconnect');
+      pair = pair_users[socket.id]
+      if(pair != undefined){ //if there were a connection with anybody
+        pair_users = _.omit(pair_users, pair)
+        pair_users = _.omit(pair_users, socket.id)
+
+        users_connected[pair] = 0;
+      }
+
+      console.log('user disconnected')
+      console.log(users_connected)
+      console.log(pair_users)
+    });
+
+});
 
 
 app.get("/getDB/:unit", (request, response) => {

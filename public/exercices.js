@@ -9,7 +9,7 @@ var nameEx=[  'Word Search Puzzle',
               'Grouping',
               'Select the image',
               'Hanged',
-              'Not implemented',
+              'Pinturillo',
               'Not implemented']
 var nameUnits=[ 'Unit 1',
                 'Unit 2',
