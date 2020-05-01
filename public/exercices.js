@@ -1,3 +1,8 @@
+var queryString = decodeURIComponent(window.location.search);
+queryString = queryString.substring(1);
+var user = queryString.split("=")[1];
+console.log('User: '+user);
+
 var exercices = [], units = []; //arrays to save buttons
 var unitEx; //variable to save the actual unit
 var queryString; //variable to send variables between html
@@ -56,7 +61,7 @@ async function draw(){
           if (unitEx==units.length){
             unitEx='*';
           }
-          queryString = "?unitEx=" + unitEx;
+          queryString = "?unitEx=" + unitEx +'&'+ user;
           switch(exercice){
             case 11:
               window.location.href='/1exerciceWS.html' + queryString;

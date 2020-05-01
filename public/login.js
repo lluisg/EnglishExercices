@@ -1,3 +1,5 @@
+var user_name;
+
 function setup(){
 
   removeElements();
@@ -31,12 +33,14 @@ function setup(){
 function draw(){
   if(usuario){
     console.log('user correct');
-    window.location.href='/exercices.html';
+    queryString = "?user=" + username.value();
+    window.location.href='/exercices.html' + queryString;
   }
 }
 
 function keyPressed() {
   if (keyCode === ENTER) {
+    user_name = username.value();
     checkUser();
   }
 }
@@ -45,7 +49,7 @@ async function checkUser(){
   //retrieve if the user is in the database or not
   console.log('function checkuser');
   let user = {
-    username:username.value(),
+    username: username.value(),
     password: password.value()
   };
   const data2 = {user};

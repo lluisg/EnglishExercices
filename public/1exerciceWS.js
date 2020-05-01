@@ -3,8 +3,11 @@ var game
 //To get the unit which we are gona do the exercise
 var queryString = decodeURIComponent(window.location.search);
 queryString = queryString.substring(1);
-var unitEx = queryString.split("=")[1];
-console.log('Unit: '+unitEx);
+var params = queryString.split("=")[1];
+var unitEx = params.split("&")[0]
+var user_name = params.split("&")[1]
+console.log('Unit: '+ unitEx +' and Username: '+ user_name);
+
 
 var names = [], namesNoShuffled=[];
 var numberWordsWS=10; //how many words from all the vocabulary will be shuffled
@@ -32,7 +35,7 @@ async function setup(){
   recreate();
   $('#create-grid').click(recreate);
   $('#solve').click(() => game.solve());
-  $('#get-back').click(() => window.location.href='/exercices.html');
+  $('#get-back').click(() => window.location.href='/exercices.html?user='+ user_name);
 }
 
 // Start a basic word game without customization !

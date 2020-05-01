@@ -1,8 +1,11 @@
 //To get the unit which we are gona do the exercise
 var queryString = decodeURIComponent(window.location.search);
 queryString = queryString.substring(1);
-var unitEx = queryString.split("=")[1];
-console.log('Unit: '+unitEx);
+var params = queryString.split("=")[1];
+var unitEx = params.split("&")[0]
+var user_name = params.split("&")[1]
+console.log('Unit: '+ unitEx +' and Username: '+ user_name);
+
 
 //THE EXERCICE PHRASES/WORDS MUST BE ALL IN MINUS!
 
@@ -43,7 +46,7 @@ function setup(){
   but=createButton('Return');
   but.position(windowWidth*(5/6+1/12-1/24),windowHeight*(3/4+2/12));
   but.size(80,windowHeight/20);
-  but.mousePressed( response => window.location.href='/exercices.html');
+  but.mousePressed( response => window.location.href='/exercices.html?user='+ user_name);
 
   restart=createButton('Restart');
   restart.position(windowWidth*(5/6+1/12-1/24),windowHeight*(3/4+1/12));

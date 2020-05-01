@@ -3,8 +3,11 @@
 //To get the unit which we are gona do the exercise
 var queryString = decodeURIComponent(window.location.search);
 queryString = queryString.substring(1);
-var unitEx = queryString.split("=")[1];
-console.log('Unit: '+unitEx);
+var params = queryString.split("=")[1];
+var unitEx = params.split("&")[0]
+var user_name = params.split("&")[1]
+console.log('Unit: '+ unitEx +' and Username: '+ user_name);
+
 
 var grid = [];
 if(unitEx==1){
@@ -162,7 +165,7 @@ $("#clue").click(function(){
 });
 
 $("#return").click(function(){
-  window.location.href='/exercices.html'
+  window.location.href='/exercices.html?user='+ user_name;
 });
 
 function get_direction(question_number){
