@@ -73,7 +73,7 @@ async function setup(){
   restart.size(80,windowHeight/20);
   restart.style("background-color", "red")
   restart.hide();
-  restart.mousePressed( response => window.location.href='/5exerciceMultipleChoice.html?unitEx='+unitEx);
+  restart.mousePressed( response => window.location.href='/5exerciceMultipleChoice.html?unitEx='+unitEx +'&'+ user_name);
 
 }
 

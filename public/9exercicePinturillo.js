@@ -10,20 +10,25 @@ var socket;
 var connected = false; //if there's a pair connection or not
 var turn = 1; //indicates which turn is, 1 turn to guess, 0 turn to draw
 var written = ''; //where the text written is saved
+var correct_word=false, timer=0; //if the word written is correct
 var words = [], words_rnd = []; //where the words to guess will be saved
 var actual_guess; //the word the person is tryong to draw
 var drawing = new Array(); //where the positions of the drawings will be saved
+var rival_name = '';
+var completed = false; //all words have been done
+var number_correct_words = 0, total_words; //follow the number of correct guesses
 
 function setup(){
 
   var wordsDB = getData().then(async(response) =>{
     for(let i=0; i<response.result.length; i++){
-      words[i] = response.result[i].word;
+      words[i] = response.result[i].word.toUpperCase();
     }
+    total_words = words.length;
     words_rnd = shuffleList(words);
 
   });
-  resetBlackboard();
+  resetAllCanvas();
 
   socket = io.connect('http://localhost:3000');
   console.log('Im socket')
@@ -36,6 +41,10 @@ function setup(){
   pop();
 
   socket.on('paired', connectUsers);
+  socket.on('named_rival', function(data){
+    rival_name = data;
+    console.log('rival = ', rival_name);
+  });
   socket.on('pair_disconnect', pairDisconnected);
   socket.on('painted', addPointDrawing);
   socket.on('written', newText);
@@ -43,6 +52,12 @@ function setup(){
     actual_guess = guess;
     console.log('get actual guess', actual_guess);
   });
+  socket.on('cleanedBlackboard', resetBlackboard);
+  socket.on('get_words_completed', function(){
+    completed = true;
+    console.log('get words completed', completed);
+  });
+  socket.on('passed_next_word', nextWord);
 
   loginOut();
 
@@ -56,16 +71,34 @@ function setup(){
   restart.size(80,windowHeight/20);
   restart.style("background-color", "red")
   restart.hide();
-  restart.mousePressed( response => window.location.href='/9exercicePinturillo.html?unitEx='+unitEx);
+  restart.mousePressed( response => window.location.href='/9exercicePinturillo.html?unitEx='+unitEx +'&'+ user_name);
+
+  buttonCleanBlackboard=createButton('Clean');
+  buttonCleanBlackboard.position(windowWidth*17/20,windowHeight*5/40);
+  buttonCleanBlackboard.size(windowWidth/20, windowHeight/20);
+  buttonCleanBlackboard.style("background-color", "white")
+  buttonCleanBlackboard.hide();
+  buttonCleanBlackboard.mousePressed(resetBlackboard);
+
+  buttonNextWord=createButton('Next Word');
+  buttonNextWord.position(windowWidth*17/20,windowHeight*15/20);
+  buttonNextWord.size(windowWidth/20, windowHeight/20);
+  buttonNextWord.style("background-color", "red")
+  buttonNextWord.hide();
+  buttonNextWord.mousePressed(passNextWord);
 
 }
 
 function draw(){
   if(connected){
-    resetBlackboard();
+    push();
+    resetAllCanvas();
     fill(0);
+    textSize(25)
+    textStyle(BOLD)
     textAlign(CENTER);
     text(written, windowWidth/2, windowHeight*9/10);
+    pop();
 
     for(let i=0; i<drawing.length; i++){
       push();
@@ -75,6 +108,7 @@ function draw(){
       pop();
     }
     if(turn == 0){
+      // if you draw, you will have the word to draw on the upper left
       push();
       w = textWidth(actual_guess) + windowWidth/20;
       h = windowHeight*0.8/10;
@@ -88,67 +122,132 @@ function draw(){
       fill(0);
       text(actual_guess, windowWidth/10 + w/2, windowHeight/10 + h/2);
 
+      if(rival_name.length > 0){
+        // your name on blackboard
+        textSize(20);
+        textStyle(BOLD);
+        textAlign(CENTER, CENTER);
+        fill(0);
+        text(user_name.toUpperCase() +':', windowWidth/20, windowHeight*3/20);
+        // rival name on line text
+        textSize(20);
+        textStyle(BOLD);
+        textAlign(RIGHT, BASELINE);
+        fill(0);
+        text(rival_name.toUpperCase() +':', windowWidth*(1/4-1/20), windowHeight*9/10);
+      }
       pop();
-      // push();
-      // stroke(0);
-      // noFill();
-      // rect(windowWidth/10, windowHeight/10, windowWidth*8/10, windowHeight*7/10);
-      //
-      // fill(0);
-      // textAlign(CENTER);
-      // text(written, windowWidth/2, windowHeight*9/10);
 
-
+    }else if(turn == 1){
+      if(rival_name.length > 0){
+        push();
+        // rival name on blackboard
+        textSize(20);
+        textStyle(BOLD);
+        textAlign(CENTER, CENTER);
+        fill(0);
+        text(rival_name.toUpperCase() +':', windowWidth/20, windowHeight*3/20);
+        // your name on line text
+        textSize(20);
+        textStyle(BOLD);
+        textAlign(RIGHT, BASELINE);
+        fill(0);
+        text(user_name.toUpperCase() +':', windowWidth*(1/4-1/20), windowHeight*9/10);
+        pop();
+      }
     }
+
+    if(correct_word){
+      //if you have the word right you will wait for 3 seconds
+      // when you can't write
+      push();
+      translate(windowWidth*7/10, windowHeight*7/10);
+      angleMode(DEGREES);
+      rotate(-45);
+      fill(256);
+      rect(-windowWidth*3/10, -windowHeight*0.5/10, windowWidth*6/10, windowHeight*1/10);
+
+      textSize(40);
+      textAlign(CENTER, CENTER);
+      fill(0, 220, 0);
+      text('CORRECT',0,0);
+      pop();
+
+      w = textWidth(actual_guess) + windowWidth/20;
+      h = windowHeight*0.8/10;
+      strokeWeight(3);
+      fill(0);
+      rect(windowWidth/10, windowHeight/10, w, h);
+
+      if(timer==0){
+        correct_word=false;
+        written='';
+        if(turn == 0){ //if you were drawing, you will next write
+          resetBlackboard(); //clean the blackboard for the next drawing
+          buttonCleanBlackboard.hide();
+          buttonNextWord.hide();
+          words_rnd.splice(0, 1);
+          turn = 1;
+        }else if(turn == 1){ //if you were writing, you will draw next
+          buttonCleanBlackboard.show();
+          buttonNextWord.show();
+          const index = words_rnd.indexOf(actual_guess); //remove the element we were guessing
+          if (index > -1) {
+            words_rnd.splice(index, 1);
+          }
+          if(words_rnd.length > 0){
+            actual_guess = words_rnd[0];
+            socket.emit('set_actual_guess', actual_guess);
+            console.log('set actual guess', actual_guess);
+          }else{ //if all words have been done
+            w = textWidth(actual_guess) + windowWidth/20;
+            h = windowHeight*0.8/10;
+            strokeWeight(3);
+            fill(0);
+            rect(windowWidth/10, windowHeight/10, w, h);
+            buttonCleanBlackboard.hide();
+            buttonNextWord.hide();
+
+            socket.emit('set_words_completed')
+            completed = true;
+          }
+          turn = 0;
+        }
+
+      }else if(frameCount % 60 == 0){
+        console.log('timer: ', timer);
+        timer--;
+      }
+    }
+
+    if(completed){
+      //draw completed text and count correct words
+      push();
+      textSize(50);
+      textStyle(BOLD);
+      textAlign(CENTER, CENTER);
+      if(number_correct_words == total_words){ //if guessed all right
+        fill(0, 220, 0);
+      }else if(number_correct_words > total_words/2){ //if guessed half or more right
+        fill(0, 0, 220);
+      }else{ //if guessed right less than a half
+        fill(220, 0, 0);
+      }
+      text('COMPLETED', windowWidth/2, windowHeight/2);
+      pop();
+    }
+
   }
-
-  //
-  //
-  // if (correction=='incorrect'){
-  //   console.log('incorrect text ' +timer);
-  //   textSize(20);
-  //   textAlign(LEFT);
-  //   fill(220, 0, 0);
-  //   text('  Incorrect', windowWidth*3/4, windowHeight/2 );
-  //
-  //   if(timer==0){
-  //     correction='a';
-  //     resetCanvas();
-  //   }else if(frameCount % 60 == 0){
-  //     timer--;
-  //   }
-  //
-  // }else if (correction=='correct'){
-  //   textSize(20);
-  //   textAlign(LEFT);
-  //   fill(0, 220, 0);
-  //   text('  Correct', windowWidth*3/4, windowHeight/2 );
-  //
-  //   if(timer==0){
-  //     correction='a';
-  //     numberimg++;
-  //     //actualitzar marcador
-  //     if(numberimg<descriptions.length){
-  //       changeImageActual();
-  //     }else{
-  //       win=true;
-  //       img=loadImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwxS2VeYntXCWsjdaiQxNhCAofZhbrDv41Lb4NrdhR6G8Z-BMJ&s', resetCanvas);
-  //     }
-  //
-  //     // img=loadImage('https://images.unsplash.com/photo-1511216113906-8f57bb83e776?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80', resetCanvas);
-  //   }else if(frameCount % 60 == 0){
-  //     console.log(timer);
-  //     timer--;
-  //   }
-  // }
-
 }
+
+
 
 function connectUsers(partner_id, t){
   restart.hide();
   console.log('CONNECT USERS');
   console.log(socket.id+' connecting to', partner_id);
   socket.emit('conn_partner', partner_id);
+  socket.emit('name_rival', user_name);
   if(t == 1){
     turn = 1; // you guess
     console.log('you write');
@@ -158,11 +257,16 @@ function connectUsers(partner_id, t){
     actual_guess = words_rnd[0];
     socket.emit('set_actual_guess', actual_guess);
     console.log('set actual guess', actual_guess);
+    buttonCleanBlackboard.show();
+    buttonNextWord.show();
   }
   connected = true;
 }
 function pairDisconnected(){
   connected=false;
+  rival_name = '';
+  buttonCleanBlackboard.hide();
+  buttonNextWord.hide();
   clear();
   push();
   textSize(20);
@@ -172,7 +276,8 @@ function pairDisconnected(){
   pop();
   restart.show();
 }
-function resetBlackboard(){
+function resetAllCanvas(){
+  // will reset the canvas but not the values of drawing and text
   clear();
   createCanvas(windowWidth, windowHeight);
   background(220);
@@ -195,34 +300,70 @@ function mouseDragged(){
       x:mouseX,
       y:mouseY,
     }
-    socket.emit('paint', data)
+    socket.emit('paint', data);
   }
 }
 function addPointDrawing(data){
   drawing.push([data.x, data.y]);
 }
 
+function resetBlackboard(){
+  // will reset the blackboard and the value of the drawing
+  drawing = new Array();
+  console.log('blackboard cleaned');
+  if(turn == 0){
+    // if you are drawing, will warn the writer that you cleaned the blackboard
+    socket.emit('cleanBlackboard');
+    console.log('send clean Blackboard');
+  }
+  resetAllCanvas();
+}
+
+
+
 function keyTyped(){
-  //if you are guessing you can write
-  if(turn == 1){
+  //if you are guessing you can write, unless you already guessed right
+  if(turn == 1 && correct_word == false){
     written = written + str(key).toUpperCase();
     sendText();
   }
 }
 function keyPressed() {
-  if (keyCode === BACKSPACE && turn == 1) {
+  if (keyCode === BACKSPACE && turn == 1 && correct_word == false) {
     written = written.slice(0, -1);
     sendText();
   }
 }
 function sendText(){
+  if( written == actual_guess){
+    nextWord(true);
+  }
   var data = {
     text:written,
   }
   socket.emit('write', data);
 }
 function newText(data){
-  written = data.text;
+  if(correct_word == false){
+    written = data.text;
+
+    if(written == actual_guess){
+      nextWord(true);
+    }
+  }
+}
+function nextWord(guessed_right){
+  if(guessed_right == true){
+    number_correct_words += 1;
+    console.log(number_correct_words +'correct words guessed');
+  }
+  correct_word = true;
+  timer = 3;
+}
+function passNextWord(){
+  console.log('NEXT WORRD IMPLEMENTEEED');
+  socket.emit('pass_next_word');
+  nextWord(false);
 }
 
 

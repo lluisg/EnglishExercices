@@ -61,18 +61,10 @@ io.sockets.on('connect', function(socket) {
       console.log('pairing done for ', socket.id)
       console.log(pair_users)
     });
-
-    socket.on('paint', function(data){
-      socket.broadcast.to(pair_users[socket.id]).emit('painted', data);
+    socket.on('name_rival', function(data){
+      socket.broadcast.to(pair_users[socket.id]).emit('named_rival', data);
     });
 
-    socket.on('write', function(data){
-      socket.broadcast.to(pair_users[socket.id]).emit('written', data);
-    });
-
-    socket.on('set_actual_guess', function(data){
-      socket.broadcast.to(pair_users[socket.id]).emit('get_actual_guess', data);
-    });
 
     socket.on('disconnect', function() {
       // delete the connections saved
@@ -91,6 +83,29 @@ io.sockets.on('connect', function(socket) {
       console.log(users_connected)
       console.log(pair_users)
     });
+
+    socket.on('paint', function(data){
+      socket.broadcast.to(pair_users[socket.id]).emit('painted', data);
+    });
+
+    socket.on('write', function(data){
+      socket.broadcast.to(pair_users[socket.id]).emit('written', data);
+    });
+
+    socket.on('set_actual_guess', function(data){
+      socket.broadcast.to(pair_users[socket.id]).emit('get_actual_guess', data);
+    });
+
+    socket.on('cleanBlackboard', function(){
+      socket.broadcast.to(pair_users[socket.id]).emit('cleanedBlackboard');
+    });
+    socket.on('set_words_completed', function(){
+      socket.broadcast.to(pair_users[socket.id]).emit('get_words_completed');
+    });
+    socket.on('pass_next_word', function(){
+      socket.broadcast.to(pair_users[socket.id]).emit('passed_next_word', false);
+    });
+
 
 });
 

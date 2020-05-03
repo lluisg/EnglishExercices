@@ -52,7 +52,7 @@ function setup(){
   restart.size(80,windowHeight/20);
   restart.style("background-color", "red")
   restart.hide();
-  restart.mousePressed( response => window.location.href='/4exerciceImageD.html?unitEx='+unitEx);
+  restart.mousePressed( response => window.location.href='/4exerciceImageD.html?unitEx='+unitEx +'&'+ user_name);
 }
 
 function draw(){
