@@ -14,7 +14,7 @@ var nameEx=[  'Word Search Puzzle',
               'Grouping',
               'Select the image',
               'Hanged',
-              'Pinturillo',
+              'Pictionary',
               'Not implemented']
 var nameUnits=[ 'Unit 1',
                 'Unit 2',
@@ -24,7 +24,7 @@ var nameUnits=[ 'Unit 1',
                 'Unit 6',
                 'All',];
 var numberEx=nameEx.length, numberUnits=nameUnits.length; //values # exercices and units
-
+var units_buttons_created = false;
 
 function setup(){
   removeElements();
@@ -46,8 +46,10 @@ async function draw(){
   for(let i=0;i<numberUnits;i++){ //check all units buttons
     units[i].mousePressed(putUnitsBlue);
   }
-  for(let i=0;i<numberEx;i++){ //check all exercices buttons
-   exercices[i].mousePressed(putExBlue);
+  if(units_buttons_created){
+    for(let i=0;i<numberEx;i++){ //check all exercices buttons
+      exercices[i].mousePressed(putExBlue);
+    }
   }
 
   //when an exercice and a unit are selected, the state change to that information
@@ -59,7 +61,7 @@ async function draw(){
           let exercice=i+11;
           console.log('game state: '+(i+11)+' Unit: '+unitEx);
           if (unitEx==units.length){
-            unitEx='*';
+            unitEx=0;
           }
           queryString = "?unitEx=" + unitEx +'&'+ user;
           switch(exercice){
@@ -88,7 +90,7 @@ async function draw(){
               window.location.href='/8exerciceHanged.html' + queryString;
               break;
             case 19:
-              window.location.href='/9exercicePinturillo.html' + queryString;
+              window.location.href='/9exercicePictionary.html' + queryString;
               break;
             case 19:
               window.location.href='/91exerciceLetterGame.html' + queryString;
@@ -110,18 +112,18 @@ function initSelect(){
 
   disth=windowHeight/(2*(numberUnits-floor(numberUnits/2))+1);
   distw=windowWidth/(14);
-  createButtonsInterval(distw,disth,numberUnits,units,0,0,nameUnits);
+  createButtonsInterval(distw,disth,numberUnits,units,0,0,nameUnits, false);
 
-  disth=windowHeight/(2*(numberEx-floor(numberEx/2))+1);
-  distw=windowWidth/(14);
-  createButtonsInterval(distw,disth,numberEx,exercices,windowWidth/2,0, nameEx);
-  exercices.forEach(function(exercice){
-    //hide all the unit buttons until one exercice is pressed
-    exercice.hide();
-  });
+  // disth=windowHeight/(2*(numberEx-floor(numberEx/2))+1);
+  // distw=windowWidth/(14);
+  // createButtonsInterval(distw,disth,numberEx,exercices,windowWidth/2,0, nameEx);
+  // exercices.forEach(function(exercice){
+  //   //hide all the unit buttons until one exercice is pressed
+  //   exercice.hide();
+  // });
 }
 
-function createButtonsInterval(x,y,n,vector, startingPointX,startingPointY, writing){
+function createButtonsInterval(x,y,n,vector, startingPointX,startingPointY, writing, allSelected){
   //function to create n buttons uniformously inside x*y and save them in the vector array that will show as input the writing
   var grupos, initial;
 
@@ -134,10 +136,19 @@ function createButtonsInterval(x,y,n,vector, startingPointX,startingPointY, writ
       initial=n-grupos;
     }
     for(let i=0;i<grupos;i++){
-      vector[i+initial] = createButton(writing[i+initial]);
-      vector[i+initial].position((((j-1)*3)+1)*x+startingPointX, ((2*i)+1)*y+startingPointY);
-      vector[i+initial].size(2*x,y);
-      vector[i+initial].value(0);
+      n_ex = i + initial; //keep truck of the number of the exercice right now
+      if(allSelected && (n_ex ==  0 || n_ex ==  4 || n_ex ==  9)){ //with this exercices is ot possible with all units
+        vector[i+initial] = createButton('WILL NOT WORK');
+        vector[i+initial].style('color','red');
+        vector[i+initial].position((((j-1)*3)+1)*x+startingPointX, ((2*i)+1)*y+startingPointY);
+        vector[i+initial].size(2*x,y);
+        vector[i+initial].value(0);
+      }else{
+        vector[i+initial] = createButton(writing[i+initial]);
+        vector[i+initial].position((((j-1)*3)+1)*x+startingPointX, ((2*i)+1)*y+startingPointY);
+        vector[i+initial].size(2*x,y);
+        vector[i+initial].value(0);
+      }
     }
   }
 }
@@ -156,9 +167,29 @@ function putUnitsBlue(){
   //put the unit buttons in blue when you click them and its value to 1
   this.value(1);
   this.style('background-color','#5064ad');
+  //check which unit has been changed
+  ind_unit = 1;
+  units.forEach(function(unit){
+    if(unit.value() == 0){
+      ind_unit += 1;
+    }else{
+      unit_changed = ind_unit;
+    }
+  });
+  console.log('unit selected: ', unit_changed)
 
-  //show the exercices buttons
-  for(let i=0;i<numberEx;i++){
-    exercices[i].show();
+  disth=windowHeight/(2*(numberEx-floor(numberEx/2))+1);
+  distw=windowWidth/(14);
+  if(unit_changed == 7){
+    createButtonsInterval(distw,disth,numberEx,exercices,windowWidth/2,0, nameEx, true);
+  }else{
+    createButtonsInterval(distw,disth,numberEx,exercices,windowWidth/2,0, nameEx, false);
   }
+
+  units_buttons_created = true;
+
+  // //show the exercices buttons
+  // for(let i=0;i<numberEx;i++){
+  //   exercices[i].show();
+  // }
 }

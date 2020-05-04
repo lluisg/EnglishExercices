@@ -10,7 +10,7 @@ console.log('Unit: '+ unitEx +' and Username: '+ user_name);
 
 
 var names = [], namesNoShuffled=[];
-var numberWordsWS=10; //how many words from all the vocabulary will be shuffled
+var MAX_WORDS=10; //how many words from all the vocabulary will be shuffled
 
 async function setup(){
   logOut=createImg('images/logout.png');
@@ -29,7 +29,7 @@ async function setup(){
   // in order to reestart the list of words of eevry soup
   var listed = $( "li" ).not( "#add-word" );
   listed.remove();
-  names = shuffleList(namesNoShuffled).slice(0,numberWordsWS); //to select N random words
+  names = shuffleList(namesNoShuffled).slice(0,MAX_WORDS); //to select N random words
   console.log(names);
   names.map(word => WordFindGame.insertWordAfter($('#add-word').parent(), word));
   recreate();

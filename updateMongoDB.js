@@ -133,11 +133,11 @@ async function run() {
          await col9.insertOne(elements[i]);
        }
 
-       // UPDATE PINTURILLO ----------------------------------------------------
-       const col10 = db.collection("pinturillo"); //table
+       // UPDATE PICTIONARY ----------------------------------------------------
+       const col10 = db.collection("pictionary"); //table
        col10.drop()
        // read the info from the json file
-       rawdata = fs.readFileSync('jsons_DB/pinturilloDB.json');
+       rawdata = fs.readFileSync('jsons_DB/pictionaryDB.json');
        elements = JSON.parse(rawdata);
        for(let i=0; i<elements.length;i++){
          // Insert a single document, wait for promise so we can read it back

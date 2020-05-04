@@ -21,10 +21,11 @@ var correct = false;
 
 var timer=0;
 var correct = [], allcorrect=false;
+var MAX_LENGTH = 7;
 async function setup(){
 
   var auxGroup = getData().then(async(response) =>{
-   for(let i=0; i<response.result.length; i++){
+   for(let i=0; i<(response.result.length || MAX_LENGTH); i++){
      words[i] = response.result[i].word;
      phrases[i] = response.result[i].phrase;
      references[i] = response.result[i].directory;
@@ -160,7 +161,6 @@ function checking(){
   }
 }
 
-
 function loginOut(){
   logOut=createImg('images/logout.png');
   logOut.size(25,25);
@@ -175,5 +175,6 @@ async function getData(){
   const response = await fetch('getDB/'+ exercice +'&'+ unitEx);
   const json = await response.json();
   console.log('DB received: '+ json)
+  console.log(json);
   return json;
 }

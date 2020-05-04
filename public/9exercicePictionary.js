@@ -10,7 +10,7 @@ var socket;
 var connected = false; //if there's a pair connection or not
 var turn = 1; //indicates which turn is, 1 turn to guess, 0 turn to draw
 var written = ''; //where the text written is saved
-var correct_word=false, timer=0; //if the word written is correct
+var correct_word='a', timer=0; //if the word written is correct or not
 var words = [], words_rnd = []; //where the words to guess will be saved
 var actual_guess; //the word the person is tryong to draw
 var drawing = new Array(); //where the positions of the drawings will be saved
@@ -31,6 +31,8 @@ function setup(){
   resetAllCanvas();
 
   socket = io.connect('http://localhost:3000');
+  socket.emit('unit_user', unitEx);
+
   console.log('Im socket')
   console.log(socket);
   push();
@@ -71,7 +73,7 @@ function setup(){
   restart.size(80,windowHeight/20);
   restart.style("background-color", "red")
   restart.hide();
-  restart.mousePressed( response => window.location.href='/9exercicePinturillo.html?unitEx='+unitEx +'&'+ user_name);
+  restart.mousePressed( response => window.location.href='/9exercicePictionary.html?unitEx='+unitEx +'&'+ user_name);
 
   buttonCleanBlackboard=createButton('Clean');
   buttonCleanBlackboard.position(windowWidth*17/20,windowHeight*5/40);
@@ -157,11 +159,11 @@ function draw(){
       }
     }
 
-    if(correct_word){
+    if(typeof(correct_word) === "boolean"){
       //if you have the word right you will wait for 3 seconds
       // when you can't write
       push();
-      translate(windowWidth*7/10, windowHeight*7/10);
+      translate(windowWidth*7/10, windowHeight*6/10);
       angleMode(DEGREES);
       rotate(-45);
       fill(256);
@@ -169,8 +171,13 @@ function draw(){
 
       textSize(40);
       textAlign(CENTER, CENTER);
-      fill(0, 220, 0);
-      text('CORRECT',0,0);
+      if(correct_word == true){
+        fill(0, 220, 0);
+        text('CORRECT',0,0);
+      }else{
+        fill(220, 0, 0);
+        text('NEXT ONE',0,0);
+      }
       pop();
 
       w = textWidth(actual_guess) + windowWidth/20;
@@ -180,7 +187,7 @@ function draw(){
       rect(windowWidth/10, windowHeight/10, w, h);
 
       if(timer==0){
-        correct_word=false;
+        correct_word='a';
         written='';
         if(turn == 0){ //if you were drawing, you will next write
           resetBlackboard(); //clean the blackboard for the next drawing
@@ -223,18 +230,28 @@ function draw(){
     if(completed){
       //draw completed text and count correct words
       push();
+      w = textWidth(actual_guess) + windowWidth/20;
+      h = windowHeight*0.8/10;
+      strokeWeight(3);
+      fill(0);
+      rect(windowWidth/10, windowHeight/10, w, h);
+
       textSize(50);
       textStyle(BOLD);
       textAlign(CENTER, CENTER);
       if(number_correct_words == total_words){ //if guessed all right
         fill(0, 220, 0);
+        text('COMPLETED\nPerfect Score!\n'+number_correct_words+'/'+total_words, windowWidth/2, windowHeight/2);
       }else if(number_correct_words > total_words/2){ //if guessed half or more right
-        fill(0, 0, 220);
+        fill(200, 200, 20);
+        text('COMPLETED\nPretty good:\n'+number_correct_words+'/'+total_words, windowWidth/2, windowHeight/2);
       }else{ //if guessed right less than a half
         fill(220, 0, 0);
+        text('COMPLETED\nRevise the unit:\n'+number_correct_words+'/'+total_words, windowWidth/2, windowHeight/2);
       }
-      text('COMPLETED', windowWidth/2, windowHeight/2);
       pop();
+
+      restart.show();
     }
 
   }
@@ -323,13 +340,13 @@ function resetBlackboard(){
 
 function keyTyped(){
   //if you are guessing you can write, unless you already guessed right
-  if(turn == 1 && correct_word == false){
+  if(turn == 1 && typeof(correct_word) != "boolean"){
     written = written + str(key).toUpperCase();
     sendText();
   }
 }
 function keyPressed() {
-  if (keyCode === BACKSPACE && turn == 1 && correct_word == false) {
+  if (keyCode === BACKSPACE && turn == 1 && typeof(correct_word) != "boolean") {
     written = written.slice(0, -1);
     sendText();
   }
@@ -344,7 +361,7 @@ function sendText(){
   socket.emit('write', data);
 }
 function newText(data){
-  if(correct_word == false){
+  if(typeof(correct_word) != "boolean"){
     written = data.text;
 
     if(written == actual_guess){
@@ -356,8 +373,10 @@ function nextWord(guessed_right){
   if(guessed_right == true){
     number_correct_words += 1;
     console.log(number_correct_words +'correct words guessed');
+    correct_word = true;
+  }else{
+    correct_word = false;
   }
-  correct_word = true;
   timer = 3;
 }
 function passNextWord(){
@@ -394,7 +413,7 @@ function loginOut(){
 }
 
 async function getData(){
-  exercice = 'pinturillo'
+  exercice = 'pictionary'
   const response = await fetch('getDB/'+ exercice +'&'+ unitEx);
   const json = await response.json();
   console.log('DB received: '+ json)

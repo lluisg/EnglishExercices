@@ -32,13 +32,13 @@ var overButton_text=[], overButton_image=[]; //indicators if the mouse is over t
 var locked;
 var connections={}; //diccionary with connections made
 var numberwords, h_diff; //variables for number of elements and the distances between buttons
+var MAX_IMAGES = 7;
 
 function setup(){
   console.log('setup');
   //collect words from database
   var namesDB = getData().then(async(response) =>{
-    print(response)
-    for(let i=0; i<response.result.length; i++){
+    for(let i=0; i<(response.result.length && MAX_IMAGES); i++){
       names[i+1] = response.result[i].word;
       names_keys[i] = i+1;
       images[i+1] = response.result[i].URL;

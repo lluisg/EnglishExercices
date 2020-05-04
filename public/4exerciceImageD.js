@@ -12,14 +12,14 @@ var descriptions = [[]];
 var img, numberimg=0; //image abd number images correctly
 var desc, check, but, restart; //buttons
 var correction; //hide after 2 seconds message correct/incorrect
-var numberWordsWS=10; //number of words to guess
+var MAX_IMAGES=10; //number of words to guess
 var win=false; //once winned hide the buttons and input
 
 function setup(){
   console.log('setup');
   //collect words from database
   var namesDB = getData().then(response =>{
-    for(let i =0;i<numberWordsWS;i++){
+    for(let i =0;i<MAX_IMAGES;i++){
       descriptions[i] = [response.result[i].word, response.result[i].URL];
     }
     descriptions = shuffleArray(descriptions); // shuffle it so not everytime get the same order

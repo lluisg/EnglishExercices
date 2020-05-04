@@ -18,13 +18,14 @@ var dist_letters=[]; //distance between the lines of the letters
 var nextword_shown = false;
 var correctly_guessed = 0;
 var nextword, but, restart; //buttons
+var MAX_WORDS = 5;
 
 function setup(){
   console.log('setup');
 
   //collect words from database
   var namesDB = getData().then(async(response) =>{
-    for(let i=0; i<response.result.length; i++){
+    for(let i=0; i<(response.result.length && MAX_WORDS); i++){
       words[i] = response.result[i].word;
       console.log('response word: '+response.result[i].word);
     }

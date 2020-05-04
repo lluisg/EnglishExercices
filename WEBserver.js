@@ -31,30 +31,37 @@ var server = app.listen(3000, () => {
 var socket = require('socket.io');
 var io = socket(server)
 
-var users_connected = {};
-var pair_users = {};
+var users_connected = {}; //users connected
+var units = {}; //units of the users
+var pair_users = {}; //connections between users
 io.sockets.on('connect', function(socket) {
     users_connected[socket.id] = 0;
     console.log('new socket')
     console.log(users_connected)
 
+    socket.on('unit_user', function(unit){
+      units[socket.id] = unit;
+      console.log('put unit');
+      console.log(users_connected);
+      console.log(units);
 
-    for(var key in users_connected){
-      // if I find someone who is not connected already, I put both values as connected
-      // and warn both of us that we have been connected
-      if(users_connected[key] == 0 && key!=socket.id){
-        users_connected[socket.id] = 1;
-        users_connected[key] = 1;
-        // pair_users[socket.id] = key;
-        console.log('user '+socket.id+' paired with '+key);
-        console.log(users_connected);
-        io.to(socket.id).emit('paired', key, 1);
-        socket.broadcast.to(key).emit('paired', socket.id, 2);
-        // socket.broadcast.to(key).emit('paired', socket.id);
-        break;
+      for(var key in users_connected){
+        // if I find someone who is not connected already and has the same unit as me
+        // I put both values as connected and warn both of us that we have been connected
+        if(users_connected[key] == 0 && units[key] == units[socket.id] && key != socket.id){
+          users_connected[socket.id] = 1;
+          users_connected[key] = 1;
+          // pair_users[socket.id] = key;
+          console.log('user '+socket.id+' paired with '+key);
+          console.log(users_connected);
+          io.to(socket.id).emit('paired', key, 1);
+          socket.broadcast.to(key).emit('paired', socket.id, 2);
+          // socket.broadcast.to(key).emit('paired', socket.id);
+          break;
+        }
+        console.log('NO CONNECTION FOUND');
       }
-      console.log('NO CONNECTION FOUND');
-    }
+    });
 
     socket.on('conn_partner', function(partner_id){
       pair_users[socket.id] = partner_id;
@@ -67,8 +74,9 @@ io.sockets.on('connect', function(socket) {
 
 
     socket.on('disconnect', function() {
-      // delete the connections saved
-      users_connected = _.omit(users_connected,socket.id);
+      // delete the socket to disconnect and its unit, and its connection
+      users_connected = _.omit(users_connected, socket.id);
+      units = _.omit(units, socket.id);
 
       socket.broadcast.to(pair_users[socket.id]).emit('pair_disconnect');
       pair = pair_users[socket.id]
@@ -129,6 +137,19 @@ app.get("/getDB/:unit", (request, response) => {
         console.log('The query result is: ', result);
         response.json({result});
       });
+      
+  }else if(unit == 0){
+    db.collection(ex).find().project({ unit:0, _id:0})
+                              .toArray((error, result) => {
+      if(error) {
+        console.log('errroooooorr DBBB')
+        return response.status(500).send(error);
+      }
+      result_shuffled = shuffleList(result)
+      console.log('The query shuffled result is: ', result_shuffled);
+      response.json({result});
+    });
+
   }else{
       db.collection(ex).find({ unit:unit }).project({ unit:0, _id:0})
                                 .toArray((error, result) => {
@@ -172,3 +193,19 @@ app.post('/checkUsr', async (request, response) => {
           }
       });
 });
+
+function shuffleList(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}

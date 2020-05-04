@@ -212,7 +212,7 @@ j = json.dumps(data_list)
 with open('jsons_DB/soundsDB.json', 'w') as f:
     f.write(j)
 
-# PINTURILLO TABLE -------------------------------------------------------------
+# PICTIONARY TABLE -------------------------------------------------------------
 sh = wb.sheet_by_index(10)
 # List to hold dictionaries
 data_list = []
@@ -229,7 +229,7 @@ for rownum in range(1, sh.nrows):
 # Serialize the list of dicts to JSON
 j = json.dumps(data_list)
 # Write to file
-with open('jsons_DB/pinturilloDB.json', 'w') as f:
+with open('jsons_DB/pictionaryDB.json', 'w') as f:
     f.write(j)
 
 

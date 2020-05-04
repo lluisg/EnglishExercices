@@ -36,17 +36,19 @@ var coordClass = []; //same of the class rectangles
 
 async function setup(){
 
- var auxGroup = getData().then(response =>{
+ var auxGroup = getData().then(result =>{
+   // in this exercice in order to be able to select with All units, 
+   // we return the array directly, not the json
    previous_theme = ''; // save the theme only if it's different from the previous one
    j=0;
-   for(let i=0; i<response.result.length; i++){
-     if( response.result[i].theme != previous_theme){
-       groups_name[j] = response.result[i].theme;
-       previous_theme = response.result[i].theme;
+   for(let i=0; i<result.length; i++){
+     if( result[i].theme != previous_theme){
+       groups_name[j] = result[i].theme;
+       previous_theme = result[i].theme;
        j+=1;
      }
-     names[i] = response.result[i].word;
-     name2group[response.result[i].word]=groups_name.indexOf(response.result[i].theme);
+     names[i] = result[i].word;
+     name2group[result[i].word]=groups_name.indexOf(result[i].theme);
      //dictionary between words and their theme
    }
    num_groups=groups_name.length;
@@ -322,6 +324,39 @@ async function getData(){
   exercice = 'grouping'
   const response = await fetch('getDB/'+ exercice +'&'+ unitEx);
   const json = await response.json();
+
+  if(unitEx == 0){
+    // if its all the units, we will only get 3 themes randomly
+    list_all_themes = new Array();
+    list_themes = new Array();
+    json.result.forEach(function(element){
+      if(list_all_themes.indexOf(element.theme) == -1){
+        list_all_themes.push(element.theme);
+      }
+    }); //we have the list of all possible themes
+    // as we got the elements in random order already, we choose the last 4
+    MAX_THEMES = 4;
+    for(let i=0; i<MAX_THEMES; i++){
+      var item = list_all_themes[Math.floor(Math.random() * list_all_themes.length)];
+      while(list_themes.indexOf(item) != -1){
+        item = list_all_themes[Math.floor(Math.random() * list_all_themes.length)];
+      }
+      list_themes.push(item);
+    }
+    console.log('list themes')
+    console.log(list_themes);
+    //now we only select the elements with that themes (sorted by themes)
+    elements = new Array();
+    list_themes.forEach(function(theme){
+      json.result.forEach(function(element){
+        if(theme == element.theme){
+          elements.push(element);
+        }
+      });
+    });
+    return elements;
+  }
   console.log('DB received: '+ json)
-  return json;
+  console.log(json)
+  return json.result;
 }
