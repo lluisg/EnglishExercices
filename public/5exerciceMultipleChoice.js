@@ -227,6 +227,7 @@ async function getData(){
   const response = await fetch('getDB/'+ exercice +'&'+ unitEx);
   const json = await response.json();
   console.log('DB received: '+ json)
+  console.log(json)
   return json;
 }
 
@@ -235,5 +236,6 @@ async function getText(){
   const response = await fetch('getDB/'+ exercice +'&'+ unitEx);
   const json = await response.json();
   console.log('DB received: '+ json)
+  console.log(json)
   return json;
 }
