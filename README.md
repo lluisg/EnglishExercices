@@ -6,7 +6,7 @@ This project consists in a set of multiple English Exercices/Games to help learn
 
 You can use it in [**THIS**](hhttps://english-exercices.herokuapp.com/) link
 
-### Development
+## Development
 
 It consists on a both server and client-side programming web service, which is (partially) responsive.
 
@@ -14,7 +14,8 @@ For some exercice, as it's needed, it allows you to play with some other player 
 
 **It's is recommendable to play it in a PC browser** service since, as commented previously, the responsiveness is not working optimally.
 
-### Languages and more
+## Languages and more
+
 - [NODE.JS]
 - [HTML]
 - [CSS]
@@ -29,7 +30,7 @@ Other packages/modules/libraries used:
 - [DOTENV]
 - [UNDERSCORE]
 
-### Features
+## Features
 
 It includes:
   - A login system
