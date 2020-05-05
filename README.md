@@ -6,6 +6,8 @@ This project consists in a set of multiple English Exercices/Games to help learn
 
 You can use it in [**THIS**](hhttps://english-exercices.herokuapp.com/) link
 
+As an extra, it includes some files which process an excel file to obtain the variables as jsons and update them into the MongoDB database.
+
 ## Development
 
 It consists on a both server and client-side programming web service, which is (partially) responsive.
@@ -29,6 +31,8 @@ Other packages/modules/libraries used:
 - [SERVE-FAVICON]
 - [DOTENV]
 - [UNDERSCORE]
+- [FS]
+- [PYTHON] (only for the extra files)
 
 ## Features
 
@@ -57,6 +61,15 @@ And modify the code necesary to make it work.
 
 Good Luck!
 
+## Extras
+
+In this project there is also:
+- **updateExcel2JSON.py**: reads an Excel file and transforms it's variables into JSON files.
+- **updateCrosswordGrid**: read an excel file in a form of a grid (for the crosswords exercice) and transform it a json file containing an array of arrays, mantaining the structure of the grid.
+-**updateMongDB**: read the json files obtained from the previous codes, and sent them into the database collection.
+
+
+
    [NODE.JS]: <https://nodejs.org>
    [HTML]: <https://www.w3schools.com/html/>
    [CSS]: <https://www.w3schools.com/css/>
@@ -68,4 +81,7 @@ Good Luck!
    [SERVE-FAVICON]: <https://www.npmjs.com/package/serve-favicon>
    [DOTENV]: <https://www.npmjs.com/package/dotenv>
    [UNDERSCORE]: <https://underscorejs.org/>
+   [FS]: <https://nodejs.org/api/fs.html>
+   [PYTHON]: <https://www.python.org/>
+
    

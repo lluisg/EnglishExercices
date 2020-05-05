@@ -22,6 +22,25 @@ j = json.dumps(data_list)
 with open('jsons_DB/usernamesDB.json', 'w') as f:
     f.write(j)
 
+# SEARCH PUZZLE TABLE ----------------------------------------------------------
+sh = wb.sheet_by_index(1)
+# List to hold dictionaries
+data_list = []
+# Iterate through each row in worksheet and fetch values into dict
+
+for rownum in range(1, sh.nrows):
+    data = OrderedDict()
+    row_values = sh.row_values(rownum)
+
+    data['unit'] = int(row_values[0])
+    data['word'] = str(row_values[1])
+    data_list.append(data)
+# Serialize the list of dicts to JSON
+j = json.dumps(data_list)
+# Write to file
+with open('jsons_DB/searchpuzzleDB.json', 'w') as f:
+    f.write(j)
+
 # CROSSWORD TABLE --------------------------------------------------------------
 sh = wb.sheet_by_index(2)
 # List to hold dictionaries
@@ -43,8 +62,8 @@ j = json.dumps(data_list)
 with open('jsons_DB/crosswordDB.json', 'w') as f:
     f.write(j)
 
-# SEARCH PUZZLE TABLE ----------------------------------------------------------
-sh = wb.sheet_by_index(1)
+# SOUNDS TABLE -----------------------------------------------------------------
+sh = wb.sheet_by_index(3)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -55,13 +74,15 @@ for rownum in range(1, sh.nrows):
 
     data['unit'] = int(row_values[0])
     data['word'] = str(row_values[1])
+    data['phrase'] = str(row_values[2])
+    data['directory'] = str(row_values[3])
     data_list.append(data)
+
 # Serialize the list of dicts to JSON
 j = json.dumps(data_list)
 # Write to file
-with open('jsons_DB/searchpuzzleDB.json', 'w') as f:
+with open('jsons_DB/soundsDB.json', 'w') as f:
     f.write(j)
-
 
 # IMAGES TABLE -----------------------------------------------------------------
 sh = wb.sheet_by_index(4)
@@ -81,46 +102,6 @@ for rownum in range(1, sh.nrows):
 j = json.dumps(data_list)
 # Write to file
 with open('jsons_DB/imagesDB.json', 'w') as f:
-    f.write(j)
-
-
-# TEXT LINE TABLE --------------------------------------------------------------
-sh = wb.sheet_by_index(8)
-# List to hold dictionaries
-data_list = []
-# Iterate through each row in worksheet and fetch values into dict
-
-for rownum in range(1, sh.nrows):
-    data = OrderedDict()
-    row_values = sh.row_values(rownum)
-
-    data['unit'] = int(row_values[0])
-    data['word'] = str(row_values[1])
-    data['URL'] = str(row_values[2])
-    data_list.append(data)
-# Serialize the list of dicts to JSON
-j = json.dumps(data_list)
-# Write to file
-with open('jsons_DB/textlineDB.json', 'w') as f:
-    f.write(j)
-
-# HANGMAN TABLE -----------------------------------------------------------------
-sh = wb.sheet_by_index(9)
-# List to hold dictionaries
-data_list = []
-# Iterate through each row in worksheet and fetch values into dict
-
-for rownum in range(1, sh.nrows):
-    data = OrderedDict()
-    row_values = sh.row_values(rownum)
-
-    data['unit'] = int(row_values[0])
-    data['word'] = str(row_values[1])
-    data_list.append(data)
-# Serialize the list of dicts to JSON
-j = json.dumps(data_list)
-# Write to file
-with open('jsons_DB/hangmanDB.json', 'w') as f:
     f.write(j)
 
 
@@ -168,7 +149,6 @@ j = json.dumps(data_list)
 with open('jsons_DB/multiplechoicetextDB.json', 'w') as f:
     f.write(j)
 
-
 # GROUPING TABLE ---------------------------------------------------------------
 sh = wb.sheet_by_index(7)
 # List to hold dictionaries
@@ -190,8 +170,8 @@ with open('jsons_DB/groupingDB.json', 'w') as f:
     f.write(j)
 
 
-# SOUNDS TABLE -----------------------------------------------------------------
-sh = wb.sheet_by_index(3)
+# TEXT LINE TABLE --------------------------------------------------------------
+sh = wb.sheet_by_index(8)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -202,14 +182,31 @@ for rownum in range(1, sh.nrows):
 
     data['unit'] = int(row_values[0])
     data['word'] = str(row_values[1])
-    data['phrase'] = str(row_values[2])
-    data['directory'] = str(row_values[3])
+    data['URL'] = str(row_values[2])
     data_list.append(data)
-
 # Serialize the list of dicts to JSON
 j = json.dumps(data_list)
 # Write to file
-with open('jsons_DB/soundsDB.json', 'w') as f:
+with open('jsons_DB/textlineDB.json', 'w') as f:
+    f.write(j)
+
+# HANGMAN TABLE -----------------------------------------------------------------
+sh = wb.sheet_by_index(9)
+# List to hold dictionaries
+data_list = []
+# Iterate through each row in worksheet and fetch values into dict
+
+for rownum in range(1, sh.nrows):
+    data = OrderedDict()
+    row_values = sh.row_values(rownum)
+
+    data['unit'] = int(row_values[0])
+    data['word'] = str(row_values[1])
+    data_list.append(data)
+# Serialize the list of dicts to JSON
+j = json.dumps(data_list)
+# Write to file
+with open('jsons_DB/hangmanDB.json', 'w') as f:
     f.write(j)
 
 # PICTIONARY TABLE -------------------------------------------------------------
@@ -231,9 +228,6 @@ j = json.dumps(data_list)
 # Write to file
 with open('jsons_DB/pictionaryDB.json', 'w') as f:
     f.write(j)
-
-
-
 
 
 

@@ -1,4 +1,6 @@
 //based on https://jsfiddle.net/7arnuq3y/2/
+// WARNING: For what it seems, it gives an error when there is a horizontal word
+// in the last line, to avoid this, if it's the case add a blank line after the lower one
 
 //To get the unit which we are gona do the exercise
 var queryString = decodeURIComponent(window.location.search);
@@ -10,23 +12,23 @@ console.log('Unit: '+ unitEx +' and Username: '+ user_name);
 
 
 var grid = [];
-if(unitEx==1){
-	grid = [	[0, 0, 0, 0, 0, '1', 0, 0, 0, '2', 0, 0],
-				[0, 0, 0, 0, '3', '1,3', '3', '3', '3', '2,3', '3', '3'],
-				['4', 0, 0, 0, 0, '1', 0, 0, 0, '2', 0, 0],
-				['4,5', '5', '5', '5', '5', '1,5', '5', 0, '6', '2,6', '6', '6'],
-				['4', 0, 0, 0, 0, '1', 0, 0, 0, '2', 0, 0],
-				['4', 0, 0, '7', 0, '1', 0, '12,8', '8', '2,8', '8', '8'],
-				['4', 0, '9', '7,9', '9', '1,9', 0, '12', 0, '2', 0, 0],
-				['4', 0, 0, '7', 0, '1', 0, '12', 0, 0, 0, '10'],
-				['4', 0, 0, '7', 0, 0, 0, 0, 0, 0, 0, '10'],
-				['4', 0, 0, '7,11', '11', '11', '11', '11', '1', '11', '11', '10,11'],
-        [0, 0, 0, '7', 0, 0, 0, 0, 0, 0, 0, '10'],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '10']
-			];
-}else{
-	console.log('You have to fill the adecuated table')
-}
+// if(unitEx==1){
+// 	grid = [	[0, 0, 0, 0, 0, '1', 0, 0, 0, '2', 0, 0, 0],
+// 				[0, 0, 0, 0, '3', '1,3', '3', '3', '3', '2,3', '3', '3', 0],
+// 				['4', 0, 0, 0, 0, '1', 0, 0, 0, '2', 0, 0, 0],
+// 				['4,5', '5', '5', '5', '5', '1,5', '5', 0, '6', '2,6', '6', '6', 0],
+// 				['4', 0, 0, 0, 0, '1', 0, 0, 0, '2', 0, 0, 0],
+// 				['4', 0, 0, '7', 0, '1', 0, '12,8', '8', '2,8', '8', '8', 0],
+// 				['4', 0, '9', '7,9', '9', '1,9', 0, '12', 0, '2', 0, 0, 0],
+// 				['4', 0, 0, '7', 0, '1', 0, '12', 0, 0, 0, '10', 0],
+// 				['4', 0, 0, '7', 0, 0, 0, 0, 0, 0, 0, '10', 0],
+// 				['4', 0, 0, '7,11', '11', '11', '11', '11', '1', '11', '11', '10,11', 0],
+//         [0, 0, 0, '7', 0, 0, 0, 0, 0, 0, 0, '10', 0],
+//         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '10', 0]
+// 			];
+// }else{
+// 	console.log('You have to fill the adecuated table')
+// }
 var clues = [];
 var answers = [];
 var correct_words=0; //number of correct words
@@ -48,6 +50,11 @@ async function setup(){
 		clues[i] = dataDB.result[i].description;
 	}
 
+	var gridDB = await getGrid();
+	grid = gridDB.result[0].grid;
+	console.log('new grid')
+	console.log(grid)
+
 	//Draw hints
 	var vertical_hints = $('<div id="vertical_hints"></div>');
 	var horizontal_hints = $('<div id="horizontal_hints"></div>');
@@ -64,8 +71,6 @@ async function setup(){
 	});
 	$("#vertical_hints_container").append(vertical_hints);
 	$("#horizontal_hints_container").append(horizontal_hints);
-}
-
 
 //Draw grid
 $.each(grid,function(i){
@@ -101,7 +106,7 @@ $.each(grid,function(i){
     });
     $("#puzzle").append(row);
 });
-
+}
 
 $(".letter").keyup(function(){
     var this_text = $(this).text();
@@ -312,6 +317,14 @@ function showClue(question_number,i,j){
 
 async function getData(){
   exercice = 'crossword'
+  const response = await fetch('getDB/'+ exercice +'&'+ unitEx);
+  const json = await response.json();
+  console.log('DB received: '+ json)
+  return json;
+}
+
+async function getGrid(){
+  exercice = 'crosswordgrid'
   const response = await fetch('getDB/'+ exercice +'&'+ unitEx);
   const json = await response.json();
   console.log('DB received: '+ json)

@@ -1,18 +1,12 @@
-// 'use strict';
-
 const fs = require('fs');
 const express = require('express');
-var socket = require('socket.io');
-const app = express();
-var _ = require('underscore');
-
-
+require('dotenv').config()
 const { MongoClient } = require("mongodb");
 
 // Replace the following with your Atlas connection string
 
-const url = "mongodb+srv://englishDB:englishpassword@cluster0-5liml.mongodb.net/test?retryWrites=true&w=majority";
-const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true } );
+const CONNECTION_URL = process.env.CONNECTION_URL;
+const client = new MongoClient(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true } );
 
 async function run() {
   try {
@@ -44,6 +38,16 @@ async function run() {
          await col1.insertOne(elements[i]);
        }
 
+       // UPDATE CROSSWORD GRID ------------------------------------------------
+       const col11 = db.collection("crosswordgrid"); //table
+       col11.drop()
+       // read the info from the json file
+       rawdata = fs.readFileSync('jsons_DB/crosswordgridDB.json');
+       elements = JSON.parse(rawdata);
+       for(let i=0; i<elements.length;i++){
+         // Insert a single document, wait for promise so we can read it back
+         await col11.insertOne(elements[i]);
+       }
 
        // UPDATE SEARCH PUZZLE -------------------------------------------------
        const col2 = db.collection("search_puzzle"); //table
