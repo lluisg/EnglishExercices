@@ -17,8 +17,9 @@ const CONNECTION_URL = process.env.CONNECTION_URL;
 const DATABASE_NAME = "englishDB";
 
 // CONNECT MONGODB DATABASE
-var server = app.listen(3000, () => {
-    console.log('listening at 3000')
+const port = process.env.PORT || 3000;
+var server = app.listen(port, () => {
+    console.log('listening at '+port)
     MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
         if(error) {
             throw error;
@@ -137,7 +138,7 @@ app.get("/getDB/:unit", (request, response) => {
         console.log('The query result is: ', result);
         response.json({result});
       });
-      
+
   }else if(unit == 0){
     db.collection(ex).find().project({ unit:0, _id:0})
                               .toArray((error, result) => {
