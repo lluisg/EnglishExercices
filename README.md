@@ -66,7 +66,7 @@ Good Luck!
 In this project there is also:
 - **updateExcel2JSON.py**: reads an Excel file and transforms it's variables into JSON files.
 - **updateCrosswordGrid**: read an excel file in a form of a grid (for the crosswords exercice) and transform it a json file containing an array of arrays, mantaining the structure of the grid.
--**updateMongDB**: read the json files obtained from the previous codes, and sent them into the database collection.
+- **updateMongDB**: read the json files obtained from the previous codes, and sent them into the database collection.
 
 
 
