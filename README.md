@@ -4,7 +4,7 @@ This project is a personal project which I made in order to learn how create a w
 
 This project consists in a set of multiple English Exercices/Games to help learn some vocabulary online.
 
-You can use it in [**THIS**](hhttps://english-exercices.herokuapp.com/) link
+You can use it in [**THIS**](https://english-exercices.herokuapp.com/) link
 
 As an extra, it includes some files which process an excel file to obtain the variables as jsons and update them into the MongoDB database.
 
