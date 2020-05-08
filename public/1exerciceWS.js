@@ -7,7 +7,8 @@ var params = queryString.split("=")[1];
 var unitEx = params.split("&")[0]
 var user_name = params.split("&")[1]
 console.log('Unit: '+ unitEx +' and Username: '+ user_name);
-
+var MIN_LENGTH = 10; //min size the grid will have
+var max_length = MIN_LENGTH; //variable to know the length necesary
 
 var names = [], namesNoShuffled=[];
 var MAX_WORDS=10; //how many words from all the vocabulary will be shuffled
@@ -22,8 +23,12 @@ async function setup(){
 
   //collect words from database
   var namesDB = await getData();
+  maxlength = 0;
   for(let i=0;i<namesDB.result.length;i++){
     namesNoShuffled.push(namesDB.result[i].word);
+    if(namesDB.result[i].word.length > max_length){
+      max_length = namesDB.result[i].word.length;
+    }
   }
 
   // in order to reestart the list of words of eevry soup
@@ -44,6 +49,7 @@ function recreate() {
   $('#result-message').removeClass();
   var fillBlanks, game;
   try {
+    console.log('the grid will have size '+max_length+'x'+max_length);
     game = new WordFindGame('#puzzle', {
       // height: desired height of the puzzle, default: smallest possible
       // * width:  desired width of the puzzle, default: smallest possible
@@ -52,8 +58,8 @@ function recreate() {
       // * maxAttempts: number of tries before increasing puzzle size, default:3
       // * maxGridGrowth: number of puzzle grid increases, default:10
       // * preferOverlap: maximize word overlap or not, default: true
-      height: 10,
-      width:  10,
+      height: max_length,
+      width:  max_length,
       orientations: ['horizontal','horizontalBack','vertical','verticalUp'],
       fillBlanks: true,
       maxAttempts: 20,

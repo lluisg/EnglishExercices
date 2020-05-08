@@ -38,7 +38,8 @@ function setup(){
   console.log('setup');
   //collect words from database
   var namesDB = getData().then(async(response) =>{
-    for(let i=0; i<(response.result.length && MAX_IMAGES); i++){
+
+    for(let i=0; i<(response.result.length || MAX_IMAGES); i++){
       names[i+1] = response.result[i].word;
       names_keys[i] = i+1;
       images[i+1] = response.result[i].URL;

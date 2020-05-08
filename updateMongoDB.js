@@ -104,17 +104,6 @@ async function run() {
          await col6.insertOne(elements[i]);
        }
 
-       // UPDATE MULTIPLE CHOICE TEXT ------------------------------------------
-       const col7 = db.collection("multiple_choice_text"); //table
-       col7.drop()
-       // read the info from the json file
-       rawdata = fs.readFileSync('jsons_DB/multiplechoicetextDB.json');
-       elements = JSON.parse(rawdata);
-       for(let i=0; i<elements.length;i++){
-         // Insert a single document, wait for promise so we can read it back
-         await col7.insertOne(elements[i]);
-       }
-
        // UPDATE GROUPING --------------------------------------------------------
        const col8 = db.collection("grouping"); //table
        col8.drop()

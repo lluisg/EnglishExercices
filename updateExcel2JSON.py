@@ -116,12 +116,13 @@ for rownum in range(1, sh.nrows):
     row_values = sh.row_values(rownum)
 
     data['unit'] = int(row_values[0])
-    data['number_word'] = int(row_values[1])
+    data['number_sentence'] = int(row_values[1])
     data['correct_answer'] = str(row_values[2])
     data['option1'] = str(row_values[3])
     data['option2'] = str(row_values[4])
     data['option3'] = str(row_values[5])
     data['option4'] = str(row_values[6])
+    data['text'] = str(row_values[7])
     data_list.append(data)
 # Serialize the list of dicts to JSON
 j = json.dumps(data_list)
@@ -129,28 +130,8 @@ j = json.dumps(data_list)
 with open('jsons_DB/multiplechoiceDB.json', 'w') as f:
     f.write(j)
 
-
-# MULTIPLE CHOICE TEXT TABLE ---------------------------------------------------
-sh = wb.sheet_by_index(6)
-# List to hold dictionaries
-data_list = []
-# Iterate through each row in worksheet and fetch values into dict
-
-for rownum in range(1, sh.nrows):
-    data = OrderedDict()
-    row_values = sh.row_values(rownum)
-
-    data['unit'] = int(row_values[0])
-    data['text'] = str(row_values[1])
-    data_list.append(data)
-# Serialize the list of dicts to JSON
-j = json.dumps(data_list)
-# Write to file
-with open('jsons_DB/multiplechoicetextDB.json', 'w') as f:
-    f.write(j)
-
 # GROUPING TABLE ---------------------------------------------------------------
-sh = wb.sheet_by_index(7)
+sh = wb.sheet_by_index(6)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -171,7 +152,7 @@ with open('jsons_DB/groupingDB.json', 'w') as f:
 
 
 # TEXT LINE TABLE --------------------------------------------------------------
-sh = wb.sheet_by_index(8)
+sh = wb.sheet_by_index(7)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -191,7 +172,7 @@ with open('jsons_DB/textlineDB.json', 'w') as f:
     f.write(j)
 
 # HANGMAN TABLE -----------------------------------------------------------------
-sh = wb.sheet_by_index(9)
+sh = wb.sheet_by_index(8)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict
@@ -210,7 +191,7 @@ with open('jsons_DB/hangmanDB.json', 'w') as f:
     f.write(j)
 
 # PICTIONARY TABLE -------------------------------------------------------------
-sh = wb.sheet_by_index(10)
+sh = wb.sheet_by_index(9)
 # List to hold dictionaries
 data_list = []
 # Iterate through each row in worksheet and fetch values into dict

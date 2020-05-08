@@ -7,7 +7,8 @@ var user_name = params.split("&")[1]
 console.log('Unit: '+ unitEx +' and Username: '+ user_name);
 
 
-var parragraf, text2complete; //paragraf parametre and base text
+var parragraf; //text will be printed in screen
+var text2complete = new Array(); //array with the base sentences
 
 //initialize buttons, options, word and solutions
 var buttons = new Array();
@@ -25,12 +26,14 @@ var words = new Array();
 var solutions = new Array();
 // var solutions = ['boy', 'sing', 'we'];
 var correct=false; //if the checking is good or not
+var MAX_SENTENCES = 6;
 
 async function setup(){
 
   var auxDB = getData().then(response =>{
-
-    for(let i=0; i<response.result.length;i++){
+    console.log('response')
+    console.log(response)
+    for(let i=0; i<(response.result.length || MAX_SENTENCES); i++){
       solutions[i] = response.result[i].correct_answer;
 
       options[i] = new Array();
@@ -43,17 +46,13 @@ async function setup(){
       buttons[i] = new Array();
 
       words[i] = i+1;
+
+      text2complete[i]=response.result[i].text;
     }
 
-    var textDB = getText().then(response2 =>{
-
-      text2complete=response2.result[0].text.split('@');
-
-      createButtonsOptions(windowWidth/2, windowHeight/2, 4, words.length, buttons, windowWidth/4, windowHeight/2 );
-      resetParragraf();
-      resetCanvas();
-
-    });
+    createButtonsOptions(windowWidth*3/4, windowHeight/2, 4, words.length, buttons, windowWidth/16, windowHeight/2 );
+    resetParragraf();
+    resetCanvas();
   });
 
   loginOut();
@@ -131,7 +130,8 @@ function selectButton(){
 }
 
 function createButtonsOptions(x,y,n,g,buttons, startingPointX,startingPointY, writing){
-  //function to create g groups with n options any uniformously inside x*y and save them in the vector array that will show as input the writing
+  //function to create g groups with n options any uniformously inside x*y and
+  // save them in the vector array that will show as input the writing
 
   //each button will be 2x*y, with distance x and y
   //this x and y will be distw and disth
@@ -152,16 +152,17 @@ function createButtonsOptions(x,y,n,g,buttons, startingPointX,startingPointY, wr
 
 function resetParragraf(){
   var parr='', w=0;
-  console.log('res par')
-  console.log(text2complete)
 
-  text2complete.forEach(function(textParts){
-    console.log(textParts)
-    parr=parr+textParts;
+  text2complete.forEach(function(text){
+    console.log(text);
+    // parr=parr+textParts;
     if(words[w]!=undefined){
-      parr=parr+words[w];
+      parr = parr + str(w+1) +'- '+ text.replace('@', words[w]) +'\n\n';
+      // parr=parr+words[w];
     }
     w++;
+    console.log('REEESSEET PARRAGRAFF');
+    console.log(parr);
   });
 
   // 'I\'m a ('+word[0]+') studing blablabla, I like to ('+word[1]+') too, so... Who are ('+word[2]+') ?';
@@ -183,8 +184,15 @@ function resetCanvas(){
   }else{
     fill(0);
   }
+
+  push();
+  rectMode(CORNER);
+  noFill();
+  rect(windowWidth/7, windowHeight/20-textAscent()*0.8, windowWidth*5/7, windowHeight*9/20);
+  pop();
+
   rectMode(CENTER);
-  text(parragraf, windowWidth/2, 100, windowWidth/1.5, windowHeight/2);
+  text(parragraf, windowWidth/2, windowHeight/20, windowWidth*6/7, windowHeight/2);
 
   for(let i=0; i < buttons.length; i++){
     initPosition=buttons[i][0].position();
@@ -224,15 +232,6 @@ function loginOut(){
 
 async function getData(){
   exercice = 'multiple_choice'
-  const response = await fetch('getDB/'+ exercice +'&'+ unitEx);
-  const json = await response.json();
-  console.log('DB received: '+ json)
-  console.log(json)
-  return json;
-}
-
-async function getText(){
-  exercice = 'multiple_choice_text'
   const response = await fetch('getDB/'+ exercice +'&'+ unitEx);
   const json = await response.json();
   console.log('DB received: '+ json)

@@ -19,7 +19,7 @@ function setup(){
   console.log('setup');
   //collect words from database
   var namesDB = getData().then(response =>{
-    for(let i =0;i<MAX_IMAGES;i++){
+    for(let i =0;i<(response.result.length || MAX_IMAGES);i++){
       descriptions[i] = [response.result[i].word, response.result[i].URL];
     }
     descriptions = shuffleArray(descriptions); // shuffle it so not everytime get the same order

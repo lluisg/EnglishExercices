@@ -137,7 +137,7 @@ function createButtonsInterval(x,y,n,vector, startingPointX,startingPointY, writ
     }
     for(let i=0;i<grupos;i++){
       n_ex = i + initial; //keep truck of the number of the exercice right now
-      if(allSelected && (n_ex ==  0 || n_ex ==  4 || n_ex ==  9)){ //with this exercices is ot possible with all units
+      if(allSelected && (n_ex ==  0 || n_ex ==  9)){ //with this exercices is ot possible with all units
         vector[i+initial] = createButton('WILL NOT WORK');
         vector[i+initial].style('color','red');
         vector[i+initial].position((((j-1)*3)+1)*x+startingPointX, ((2*i)+1)*y+startingPointY);

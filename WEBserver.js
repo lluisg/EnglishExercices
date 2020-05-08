@@ -151,6 +151,18 @@ app.get("/getDB/:unit", (request, response) => {
       response.json({result});
     });
 
+  }else if(ex=='multiple_choice'){
+    db.collection(ex).find({ unit:unit }).project({ unit:0, _id:0})
+                              .toArray((error, result) => {
+      if(error) {
+        console.log('errroooooorr DBBB')
+        return response.status(500).send(error);
+      }
+      result_shuffled = shuffleList(result)
+      console.log('The query shuffled result is: ', result_shuffled);
+      response.json({result});
+    });
+
   }else{
       db.collection(ex).find({ unit:unit }).project({ unit:0, _id:0})
                                 .toArray((error, result) => {

@@ -25,7 +25,7 @@ function setup(){
 
   //collect words from database
   var namesDB = getData().then(async(response) =>{
-    for(let i=0; i<(response.result.length && MAX_WORDS); i++){
+    for(let i=0; i<(response.result.length || MAX_WORDS); i++){
       words[i] = response.result[i].word;
       console.log('response word: '+response.result[i].word);
     }
