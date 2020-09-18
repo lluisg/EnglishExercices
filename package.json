@@ -6,7 +6,7 @@
   "scripts": {
     "nodemon": "nodemon WEBserver.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node WEBserver"    
+    "start": "node WEBserver"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     "path": "^0.12.7",
     "serve-favicon": "^2.5.0",
     "socket.io": "^2.3.0",
-    "underscore": "^1.10.2"
+    "underscore": "^1.10.2",
+    "bl": ">=2.2.1"
   }
 }
