@@ -1,6 +1,9 @@
 {
   "name": "englishexercices",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=20"
+  },
   "description": "Online English Exercices",
   "main": "WEBserver.js",
   "scripts": {
